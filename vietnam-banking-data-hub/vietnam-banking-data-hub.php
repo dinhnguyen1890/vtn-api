@@ -71,6 +71,7 @@ class Vietnam_Banking_Data_Hub {
         // API
         require_once VBDH_PLUGIN_DIR . 'includes/api/class-vbdh-api-base.php';
         require_once VBDH_PLUGIN_DIR . 'includes/api/class-vbdh-api-bidv.php';
+        require_once VBDH_PLUGIN_DIR . 'includes/api/class-vbdh-web-scraper.php';
 
         // Core
         require_once VBDH_PLUGIN_DIR . 'includes/class-vbdh-data-fetcher.php';

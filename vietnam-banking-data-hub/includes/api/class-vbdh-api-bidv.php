@@ -12,6 +12,8 @@ class VBDH_API_BIDV extends VBDH_API_Base {
 
     private $access_token = null;
     private $mock_mode = true; // Bật mock mode cho testing
+    private $use_scraping = false; // Sử dụng web scraping thay vì API
+    private $scraping_url = null; // Custom scraping URL
 
     /**
      * Authenticate với BIDV API (OAuth 2.0)
@@ -57,7 +59,12 @@ class VBDH_API_BIDV extends VBDH_API_Base {
             return $this->normalize_interest_rates($mock_data);
         }
 
-        // Authenticate trước
+        // Use web scraping if enabled
+        if ($this->use_scraping) {
+            return $this->scrape_interest_rates();
+        }
+
+        // Try API first
         if (!$this->access_token) {
             $this->authenticate();
         }
@@ -69,11 +76,18 @@ class VBDH_API_BIDV extends VBDH_API_Base {
 
         $response = $this->make_request('api/v1/interest-rates', 'GET', null, $headers);
 
+        // Fallback to web scraping if API fails
         if (is_wp_error($response)) {
-            return array();
+            error_log('BIDV API failed, falling back to web scraping');
+            return $this->scrape_interest_rates();
         }
 
         $data = $this->parse_response($response);
+
+        if (empty($data)) {
+            error_log('BIDV API returned empty data, falling back to web scraping');
+            return $this->scrape_interest_rates();
+        }
 
         return $this->normalize_interest_rates($data);
     }
@@ -88,7 +102,12 @@ class VBDH_API_BIDV extends VBDH_API_Base {
             return $this->normalize_exchange_rates($mock_data);
         }
 
-        // Authenticate trước
+        // Use web scraping if enabled
+        if ($this->use_scraping) {
+            return $this->scrape_exchange_rates();
+        }
+
+        // Try API first
         if (!$this->access_token) {
             $this->authenticate();
         }
@@ -100,11 +119,18 @@ class VBDH_API_BIDV extends VBDH_API_Base {
 
         $response = $this->make_request('api/v1/exchange-rates', 'GET', null, $headers);
 
+        // Fallback to web scraping if API fails
         if (is_wp_error($response)) {
-            return array();
+            error_log('BIDV API failed, falling back to web scraping');
+            return $this->scrape_exchange_rates();
         }
 
         $data = $this->parse_response($response);
+
+        if (empty($data)) {
+            error_log('BIDV API returned empty data, falling back to web scraping');
+            return $this->scrape_exchange_rates();
+        }
 
         return $this->normalize_exchange_rates($data);
     }
@@ -305,5 +331,69 @@ class VBDH_API_BIDV extends VBDH_API_Base {
      */
     public function set_mock_mode($enabled = true) {
         $this->mock_mode = $enabled;
+    }
+
+    /**
+     * Enable/Disable web scraping
+     */
+    public function set_use_scraping($enabled = true) {
+        $this->use_scraping = $enabled;
+    }
+
+    /**
+     * Set custom scraping URL
+     */
+    public function set_scraping_url($url) {
+        $this->scraping_url = $url;
+    }
+
+    /**
+     * Scrape interest rates from BIDV website
+     */
+    private function scrape_interest_rates() {
+        // Load web scraper class if not loaded
+        if (!class_exists('VBDH_Web_Scraper')) {
+            require_once VBDH_PLUGIN_DIR . 'includes/api/class-vbdh-web-scraper.php';
+        }
+
+        // Use custom URL if set, otherwise use default BIDV URL
+        if ($this->scraping_url) {
+            $result = VBDH_Web_Scraper::scrape_custom_url($this->scraping_url, 'interest_rates');
+        } else {
+            $result = VBDH_Web_Scraper::scrape_bidv_interest_rates();
+        }
+
+        if ($result['success'] && isset($result['data'])) {
+            // Normalize scraped data
+            return $this->normalize_interest_rates($result['data']);
+        }
+
+        error_log('BIDV scraping failed: ' . ($result['message'] ?? 'Unknown error'));
+        return array();
+    }
+
+    /**
+     * Scrape exchange rates from BIDV website
+     */
+    private function scrape_exchange_rates() {
+        // Load web scraper class if not loaded
+        if (!class_exists('VBDH_Web_Scraper')) {
+            require_once VBDH_PLUGIN_DIR . 'includes/api/class-vbdh-web-scraper.php';
+        }
+
+        // Use custom URL if set, otherwise use default BIDV URL
+        if ($this->scraping_url) {
+            $result = VBDH_Web_Scraper::scrape_custom_url($this->scraping_url, 'exchange_rates');
+        } else {
+            $result = VBDH_Web_Scraper::scrape_bidv_exchange_rates();
+        }
+
+        if ($result['success'] && isset($result['data'])) {
+            // Normalize scraped data
+            return $this->normalize_exchange_rates($result['data']);
+        }
+
+        error_log('BIDV exchange scraping failed: ' . ($result['message'] ?? 'Unknown error'));
+        return array();
     }
 }
