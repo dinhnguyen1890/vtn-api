@@ -53,7 +53,8 @@ class VBDH_API_BIDV extends VBDH_API_Base {
     public function fetch_interest_rates() {
         // Mock mode - return fake data
         if ($this->mock_mode) {
-            return $this->get_mock_interest_rates();
+            $mock_data = $this->get_mock_interest_rates();
+            return $this->normalize_interest_rates($mock_data);
         }
 
         // Authenticate trước
@@ -83,7 +84,8 @@ class VBDH_API_BIDV extends VBDH_API_Base {
     public function fetch_exchange_rates() {
         // Mock mode - return fake data
         if ($this->mock_mode) {
-            return $this->get_mock_exchange_rates();
+            $mock_data = $this->get_mock_exchange_rates();
+            return $this->normalize_exchange_rates($mock_data);
         }
 
         // Authenticate trước
@@ -244,6 +246,12 @@ class VBDH_API_BIDV extends VBDH_API_Base {
                 'buy_rate' => 680.00,
                 'sell_rate' => 720.00,
                 'transfer_rate' => 700.00
+            ),
+            array(
+                'currency_code' => 'KRW',
+                'buy_rate' => 17.50,
+                'sell_rate' => 18.20,
+                'transfer_rate' => 17.85
             )
         );
     }
