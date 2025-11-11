@@ -112,6 +112,16 @@ class VBDH_Admin {
                     <span class="dashicons dashicons-welcome-write-blog"></span>
                     <?php _e('Tạo Nội dung', 'vbdh'); ?>
                 </a>
+                <a href="?page=vbdh-banking-data&tab=shortcodes"
+                   class="nav-tab <?php echo $current_tab === 'shortcodes' ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-shortcode"></span>
+                    <?php _e('Shortcodes & Widgets', 'vbdh'); ?>
+                </a>
+                <a href="?page=vbdh-banking-data&tab=seo"
+                   class="nav-tab <?php echo $current_tab === 'seo' ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-search"></span>
+                    <?php _e('SEO & Indexing', 'vbdh'); ?>
+                </a>
             </nav>
 
             <!-- Tab Content -->
@@ -132,6 +142,14 @@ class VBDH_Admin {
 
                     case 'content':
                         $this->render_content_tab();
+                        break;
+
+                    case 'shortcodes':
+                        $this->render_shortcodes_tab();
+                        break;
+
+                    case 'seo':
+                        $this->render_seo_tab();
                         break;
 
                     default:
@@ -169,6 +187,76 @@ class VBDH_Admin {
      */
     private function render_content_tab() {
         require_once VBDH_PLUGIN_DIR . 'admin/views/tab-content.php';
+    }
+
+    /**
+     * Render shortcodes tab
+     */
+    private function render_shortcodes_tab() {
+        require_once VBDH_PLUGIN_DIR . 'admin/views/tab-shortcodes.php';
+    }
+
+    /**
+     * Render SEO tab
+     */
+    private function render_seo_tab() {
+        // Handle SEO actions
+        $this->handle_seo_actions();
+        require_once VBDH_PLUGIN_DIR . 'admin/views/tab-seo.php';
+    }
+
+    /**
+     * Handle SEO actions
+     */
+    private function handle_seo_actions() {
+        if (!isset($_POST['vbdh_seo_nonce']) || !wp_verify_nonce($_POST['vbdh_seo_nonce'], 'vbdh_seo_action')) {
+            return;
+        }
+
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+
+        $action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+
+        switch ($action) {
+            case 'test_indexnow':
+                $result = VBDH_IndexNow::test_api();
+                if ($result) {
+                    add_settings_error('vbdh_messages', 'vbdh_message', 'IndexNow API test thành công!', 'success');
+                } else {
+                    add_settings_error('vbdh_messages', 'vbdh_message', 'IndexNow API test thất bại. Kiểm tra logs.', 'error');
+                }
+                break;
+
+            case 'submit_all_posts':
+                $result = VBDH_IndexNow::submit_site_pages();
+                if ($result) {
+                    add_settings_error('vbdh_messages', 'vbdh_message', 'Đã submit tất cả posts tới IndexNow!', 'success');
+                } else {
+                    add_settings_error('vbdh_messages', 'vbdh_message', 'Submit failed. Kiểm tra logs.', 'error');
+                }
+                break;
+
+            case 'toggle_indexnow':
+                $current = get_option('vbdh_indexnow_enabled', true);
+                update_option('vbdh_indexnow_enabled', !$current);
+                $message = !$current ? 'Đã bật auto-submit' : 'Đã tắt auto-submit';
+                add_settings_error('vbdh_messages', 'vbdh_message', $message, 'success');
+                break;
+
+            case 'generate_sitemap':
+                $sitemap_path = VBDH_SEO_Optimizer::save_sitemap();
+                add_settings_error('vbdh_messages', 'vbdh_message', 'Đã tạo sitemap: ' . $sitemap_path, 'success');
+                break;
+
+            case 'save_seo_settings':
+                update_option('vbdh_twitter_handle', sanitize_text_field($_POST['vbdh_twitter_handle']));
+                update_option('vbdh_seo_auto_meta', isset($_POST['vbdh_seo_auto_meta']));
+                update_option('vbdh_seo_auto_keywords', isset($_POST['vbdh_seo_auto_keywords']));
+                add_settings_error('vbdh_messages', 'vbdh_message', 'Đã lưu cài đặt SEO!', 'success');
+                break;
+        }
     }
 
     /**
@@ -283,6 +371,10 @@ add_action('wp_ajax_vbdh_delete_bank', 'vbdh_ajax_delete_bank');
 add_action('wp_ajax_vbdh_generate_content', 'vbdh_ajax_generate_content');
 add_action('wp_ajax_vbdh_generate_comparison', 'vbdh_ajax_generate_comparison');
 
+// Frontend AJAX handlers (available to non-logged-in users)
+add_action('wp_ajax_vbdh_calculate_interest', 'vbdh_ajax_calculate_interest');
+add_action('wp_ajax_nopriv_vbdh_calculate_interest', 'vbdh_ajax_calculate_interest');
+
 function vbdh_ajax_sync_bank() {
     check_ajax_referer('vbdh_admin_nonce', 'nonce');
 
@@ -380,4 +472,71 @@ function vbdh_ajax_generate_comparison() {
     } else {
         wp_send_json_error($result);
     }
+}
+
+/**
+ * AJAX: Calculate interest (Frontend)
+ * Tính toán lãi suất dựa trên số tiền, kỳ hạn và ngân hàng
+ */
+function vbdh_ajax_calculate_interest() {
+    check_ajax_referer('vbdh_frontend_nonce', 'nonce');
+
+    $amount = floatval($_POST['amount']);
+    $term = intval($_POST['term']);
+    $bank_id = intval($_POST['bank_id']);
+
+    // Validation
+    if ($amount < 1000000) {
+        wp_send_json_error(array('message' => 'Số tiền tối thiểu là 1,000,000 VNĐ'));
+        return;
+    }
+
+    if (!in_array($term, array(1, 3, 6, 12, 24))) {
+        wp_send_json_error(array('message' => 'Kỳ hạn không hợp lệ'));
+        return;
+    }
+
+    if (!$bank_id) {
+        wp_send_json_error(array('message' => 'Vui lòng chọn ngân hàng'));
+        return;
+    }
+
+    // Get interest rate for the selected bank and term
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'vn_interest_rates';
+
+    $rate = $wpdb->get_row($wpdb->prepare("
+        SELECT interest_rate, product_name
+        FROM $table_name
+        WHERE bank_id = %d
+          AND term_months = %d
+          AND rate_type = 'savings'
+        ORDER BY effective_date DESC
+        LIMIT 1
+    ", $bank_id, $term));
+
+    if (!$rate) {
+        wp_send_json_error(array('message' => 'Không tìm thấy lãi suất cho ngân hàng và kỳ hạn này'));
+        return;
+    }
+
+    // Calculate simple interest
+    $interest_rate = floatval($rate->interest_rate);
+    $months = intval($term);
+
+    // Simple interest formula: Interest = Principal × Rate × Time
+    $interest = $amount * ($interest_rate / 100) * ($months / 12);
+    $total = $amount + $interest;
+
+    wp_send_json_success(array(
+        'rate' => number_format($interest_rate, 2),
+        'interest' => $interest,
+        'total' => $total,
+        'product_name' => $rate->product_name,
+        'formatted' => array(
+            'rate' => number_format($interest_rate, 2) . '%',
+            'interest' => number_format($interest, 0, ',', '.') . ' VNĐ',
+            'total' => number_format($total, 0, ',', '.') . ' VNĐ'
+        )
+    ));
 }

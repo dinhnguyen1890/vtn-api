@@ -79,6 +79,15 @@ class Vietnam_Banking_Data_Hub {
         // Content Generation (Phase 2)
         require_once VBDH_PLUGIN_DIR . 'includes/content/class-vbdh-content-generator.php';
 
+        // Shortcodes & Widgets (Phase 3)
+        require_once VBDH_PLUGIN_DIR . 'includes/shortcodes/class-vbdh-shortcodes.php';
+        require_once VBDH_PLUGIN_DIR . 'includes/widgets/class-vbdh-rates-widget.php';
+
+        // SEO & Indexing (Phase 4)
+        require_once VBDH_PLUGIN_DIR . 'includes/seo/class-vbdh-schema-generator.php';
+        require_once VBDH_PLUGIN_DIR . 'includes/seo/class-vbdh-indexnow.php';
+        require_once VBDH_PLUGIN_DIR . 'includes/seo/class-vbdh-seo-optimizer.php';
+
         // Admin
         if (is_admin()) {
             require_once VBDH_PLUGIN_DIR . 'admin/class-vbdh-admin.php';

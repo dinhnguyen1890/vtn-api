@@ -1,0 +1,508 @@
+/**
+ * Vietnam Banking Data Hub - Frontend Styles
+ * Styles cho shortcodes và widgets
+ */
+
+/* ========================================
+   Common Wrapper
+   ======================================== */
+.vbdh-shortcode-wrapper {
+    max-width: 100%;
+    margin: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+}
+
+.vbdh-shortcode-wrapper h3 {
+    margin: 0 0 15px;
+    padding: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+.vbdh-no-data {
+    padding: 40px 20px;
+    text-align: center;
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    color: #646970;
+    font-style: italic;
+}
+
+/* ========================================
+   Comparison Table Shortcode
+   ======================================== */
+.vbdh-comparison-wrapper {
+    overflow: hidden;
+}
+
+.vbdh-comparison-shortcode-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.vbdh-comparison-shortcode-table thead {
+    background: linear-gradient(135deg, #0073aa 0%, #005a87 100%);
+    color: #fff;
+}
+
+.vbdh-comparison-shortcode-table th {
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vbdh-comparison-shortcode-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-right: 25px;
+}
+
+.vbdh-comparison-shortcode-table th.sortable:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.vbdh-comparison-shortcode-table th.sortable::after {
+    content: '⇅';
+    position: absolute;
+    right: 8px;
+    opacity: 0.5;
+}
+
+.vbdh-comparison-shortcode-table tbody tr {
+    border-bottom: 1px solid #e5e5e5;
+    transition: background 0.2s;
+}
+
+.vbdh-comparison-shortcode-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+.vbdh-comparison-shortcode-table tbody tr.highest-rate {
+    background: #fff3cd;
+    font-weight: 600;
+}
+
+.vbdh-comparison-shortcode-table tbody tr.highest-rate:hover {
+    background: #ffe69c;
+}
+
+.vbdh-comparison-shortcode-table td {
+    padding: 12px;
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.vbdh-comparison-shortcode-table td strong {
+    color: #0073aa;
+}
+
+.vbdh-comparison-shortcode-table td img {
+    vertical-align: middle;
+    margin-top: 5px;
+}
+
+.vbdh-comparison-shortcode-table .rate-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #00a32a;
+}
+
+.vbdh-comparison-shortcode-table .rate-value.highlight {
+    color: #d63638;
+    font-size: 20px;
+}
+
+/* ========================================
+   Calculator Shortcode
+   ======================================== */
+.vbdh-calculator-wrapper {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.vbdh-calculator-wrapper h3 {
+    margin-top: 0;
+    color: #0073aa;
+    border-bottom: 2px solid #0073aa;
+    padding-bottom: 10px;
+}
+
+.vbdh-calculator-form .calc-row {
+    margin-bottom: 20px;
+}
+
+.vbdh-calculator-form label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #1d2327;
+    font-size: 14px;
+}
+
+.vbdh-calculator-form .calc-input {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e5e5e5;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.vbdh-calculator-form .calc-input:focus {
+    outline: none;
+    border-color: #0073aa;
+}
+
+.vbdh-calculator-form .calc-button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #0073aa 0%, #005a87 100%);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.vbdh-calculator-form .calc-button:hover {
+    background: linear-gradient(135deg, #005a87 0%, #004466 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,115,170,0.3);
+}
+
+.vbdh-calculator-form .calc-button:active {
+    transform: translateY(0);
+}
+
+.vbdh-calculator-form .calc-button:disabled {
+    background: #dcdcde;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.calc-result {
+    margin-top: 30px;
+    padding: 25px;
+    background: linear-gradient(135deg, #d7f4e8 0%, #b8e6d5 100%);
+    border-left: 4px solid #00a32a;
+    border-radius: 4px;
+}
+
+.calc-result h4 {
+    margin: 0 0 15px;
+    color: #00a32a;
+    font-size: 18px;
+}
+
+.calc-result .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.calc-result .result-item:last-child {
+    border-bottom: none;
+    margin-top: 10px;
+    padding-top: 15px;
+    border-top: 2px solid rgba(0,0,0,0.1);
+}
+
+.calc-result .result-item span {
+    font-size: 14px;
+    color: #1d2327;
+}
+
+.calc-result .result-item strong {
+    font-size: 20px;
+    color: #00a32a;
+}
+
+.calc-result .result-item strong.highlight {
+    font-size: 24px;
+    font-weight: 700;
+    color: #d63638;
+}
+
+/* ========================================
+   Exchange Rate Shortcode
+   ======================================== */
+.vbdh-exchange-wrapper {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.vbdh-exchange-wrapper h3 {
+    margin-top: 0;
+    color: #0073aa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Table Display */
+.vbdh-exchange-shortcode-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.vbdh-exchange-shortcode-table thead {
+    background: #f0f0f1;
+}
+
+.vbdh-exchange-shortcode-table th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dcdcde;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.vbdh-exchange-shortcode-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 14px;
+}
+
+.vbdh-exchange-shortcode-table tbody tr:hover {
+    background: #f9f9f9;
+}
+
+/* Compact Display */
+.vbdh-exchange-compact {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.vbdh-exchange-compact .exchange-item {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 15px;
+    transition: all 0.3s;
+}
+
+.vbdh-exchange-compact .exchange-item:hover {
+    border-color: #0073aa;
+    box-shadow: 0 2px 8px rgba(0,115,170,0.2);
+    transform: translateY(-2px);
+}
+
+.vbdh-exchange-compact .bank-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: #0073aa;
+    margin-bottom: 10px;
+}
+
+.vbdh-exchange-compact .rates {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.vbdh-exchange-compact .rates span {
+    flex: 1;
+    padding: 5px;
+    background: #fff;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.vbdh-exchange-compact .rates .buy {
+    color: #00a32a;
+    font-weight: 600;
+}
+
+.vbdh-exchange-compact .rates .sell {
+    color: #d63638;
+    font-weight: 600;
+}
+
+/* List Display */
+.vbdh-exchange-list {
+    list-style: none;
+    margin: 15px 0;
+    padding: 0;
+}
+
+.vbdh-exchange-list li {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e5e5;
+    font-size: 14px;
+}
+
+.vbdh-exchange-list li:hover {
+    background: #f9f9f9;
+}
+
+.vbdh-exchange-list li strong {
+    color: #0073aa;
+    font-weight: 600;
+}
+
+/* ========================================
+   Table Footer
+   ======================================== */
+.vbdh-table-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #e5e5e5;
+    text-align: right;
+}
+
+.vbdh-table-footer small {
+    color: #646970;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+@media (max-width: 768px) {
+    .vbdh-shortcode-wrapper {
+        margin: 15px 0;
+    }
+
+    .vbdh-calculator-wrapper {
+        padding: 20px 15px;
+    }
+
+    /* Make tables scrollable on mobile */
+    .vbdh-comparison-wrapper,
+    .vbdh-exchange-wrapper {
+        overflow-x: auto;
+    }
+
+    .vbdh-comparison-shortcode-table,
+    .vbdh-exchange-shortcode-table {
+        min-width: 600px;
+    }
+
+    .vbdh-comparison-shortcode-table th,
+    .vbdh-comparison-shortcode-table td {
+        padding: 8px;
+        font-size: 13px;
+    }
+
+    .vbdh-exchange-compact {
+        grid-template-columns: 1fr;
+    }
+
+    .calc-result .result-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .calc-result .result-item strong {
+        font-size: 18px;
+    }
+
+    .calc-result .result-item strong.highlight {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 480px) {
+    .vbdh-shortcode-wrapper h3 {
+        font-size: 20px;
+    }
+
+    .vbdh-calculator-wrapper {
+        padding: 15px 10px;
+    }
+
+    .vbdh-calculator-form .calc-input {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    .vbdh-calculator-form .calc-button {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .calc-result {
+        padding: 15px;
+    }
+
+    .vbdh-comparison-shortcode-table,
+    .vbdh-exchange-shortcode-table {
+        font-size: 12px;
+    }
+}
+
+/* ========================================
+   Loading State
+   ======================================== */
+.vbdh-loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.vbdh-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 3px solid #0073aa;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: vbdh-spin 0.8s linear infinite;
+}
+
+@keyframes vbdh-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================
+   Print Styles
+   ======================================== */
+@media print {
+    .vbdh-calculator-wrapper,
+    .calc-button {
+        display: none;
+    }
+
+    .vbdh-comparison-shortcode-table,
+    .vbdh-exchange-shortcode-table {
+        box-shadow: none;
+    }
+
+    .vbdh-comparison-shortcode-table thead {
+        background: #dcdcde !important;
+        color: #000 !important;
+    }
+}
