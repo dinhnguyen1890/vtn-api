@@ -23,6 +23,12 @@
             // Delete bank button
             $(document).on('click', '.vbdh-delete-bank', this.deleteBank);
 
+            // Generate content button (daily/ranking)
+            $(document).on('click', '.vbdh-generate-content', this.generateContent);
+
+            // Generate comparison button
+            $(document).on('click', '#generate-comparison-btn', this.generateComparison);
+
             // Auto-refresh logs (optional)
             if ($('.vbdh-logs-tab').length) {
                 // Uncomment to enable auto-refresh every 30 seconds
@@ -131,6 +137,102 @@
                 error: function(xhr, status, error) {
                     VBDH.showNotice('error', vbdhAdmin.strings.error + ': ' + error);
                     $button.prop('disabled', false);
+                }
+            });
+        },
+
+        /**
+         * Generate content (daily_rates or ranking)
+         */
+        generateContent: function(e) {
+            e.preventDefault();
+
+            const $button = $(this);
+            const contentType = $button.data('type');
+            const originalText = $button.html();
+
+            // Disable button
+            $button.prop('disabled', true).html('<span class="dashicons dashicons-update-alt spin"></span> Đang tạo...');
+
+            // AJAX request
+            $.ajax({
+                url: vbdhAdmin.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vbdh_generate_content',
+                    nonce: vbdhAdmin.nonce,
+                    content_type: contentType
+                },
+                success: function(response) {
+                    if (response.success) {
+                        VBDH.showNotice('success', response.data.message +
+                            ' <a href="' + response.data.edit_url + '" target="_blank">Xem bài viết</a>');
+
+                        // Reload after 2 seconds
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        VBDH.showNotice('error', response.data.message || 'Có lỗi xảy ra');
+                        $button.prop('disabled', false).html(originalText);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    VBDH.showNotice('error', 'Lỗi: ' + error);
+                    $button.prop('disabled', false).html(originalText);
+                }
+            });
+        },
+
+        /**
+         * Generate comparison post
+         */
+        generateComparison: function(e) {
+            e.preventDefault();
+
+            const bankId1 = $('#compare_bank_1').val();
+            const bankId2 = $('#compare_bank_2').val();
+
+            if (!bankId1 || !bankId2) {
+                VBDH.showNotice('error', 'Vui lòng chọn 2 ngân hàng để so sánh');
+                return;
+            }
+
+            const $button = $(this);
+            const originalText = $button.html();
+
+            // Disable button
+            $button.prop('disabled', true).html('<span class="dashicons dashicons-update-alt spin"></span> Đang tạo...');
+
+            // AJAX request
+            $.ajax({
+                url: vbdhAdmin.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'vbdh_generate_comparison',
+                    nonce: vbdhAdmin.nonce,
+                    bank_id_1: bankId1,
+                    bank_id_2: bankId2
+                },
+                success: function(response) {
+                    if (response.success) {
+                        VBDH.showNotice('success', response.data.message +
+                            ' <a href="' + response.data.edit_url + '" target="_blank">Xem bài viết</a>');
+
+                        // Reset selects and reload
+                        $('#compare_bank_1, #compare_bank_2').val('');
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        VBDH.showNotice('error', response.data.message || 'Có lỗi xảy ra');
+                        $button.prop('disabled', false).html(originalText);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    VBDH.showNotice('error', 'Lỗi: ' + error);
+                    $button.prop('disabled', false).html(originalText);
                 }
             });
         },

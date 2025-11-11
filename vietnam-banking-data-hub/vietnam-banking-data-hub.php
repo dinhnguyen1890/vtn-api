@@ -76,6 +76,9 @@ class Vietnam_Banking_Data_Hub {
         require_once VBDH_PLUGIN_DIR . 'includes/class-vbdh-data-fetcher.php';
         require_once VBDH_PLUGIN_DIR . 'includes/class-vbdh-cron.php';
 
+        // Content Generation (Phase 2)
+        require_once VBDH_PLUGIN_DIR . 'includes/content/class-vbdh-content-generator.php';
+
         // Admin
         if (is_admin()) {
             require_once VBDH_PLUGIN_DIR . 'admin/class-vbdh-admin.php';

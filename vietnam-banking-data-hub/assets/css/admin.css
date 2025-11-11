@@ -495,3 +495,216 @@
         width: 100%;
     }
 }
+
+/* Content Generation Tab */
+.content-type-box {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.content-type-box h3 {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content-type-box h3 .dashicons {
+    color: #0073aa;
+    font-size: 24px;
+}
+
+.content-type-box .feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.content-type-box .feature-list li {
+    padding: 5px 0;
+    color: #50575e;
+}
+
+.content-type-box .button-hero {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.comparison-form {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.comparison-form select {
+    flex: 1;
+}
+
+.comparison-form .vs-text {
+    font-weight: 700;
+    color: #0073aa;
+    font-size: 18px;
+}
+
+/* Recent Posts List */
+.recent-posts-list {
+    margin-top: 15px;
+}
+
+.recent-post-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid #e5e5e5;
+    transition: background 0.2s;
+}
+
+.recent-post-item:hover {
+    background: #f9f9f9;
+}
+
+.recent-post-item:last-child {
+    border-bottom: none;
+}
+
+.recent-post-item .post-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0073aa;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.recent-post-item .post-icon .dashicons {
+    font-size: 24px;
+}
+
+.recent-post-item .post-details {
+    flex: 1;
+}
+
+.recent-post-item .post-details h4 {
+    margin: 0 0 5px;
+}
+
+.recent-post-item .post-details h4 a {
+    text-decoration: none;
+    color: #1d2327;
+}
+
+.recent-post-item .post-details h4 a:hover {
+    color: #0073aa;
+}
+
+.recent-post-item .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #646970;
+}
+
+.recent-post-item .post-type-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.post-type-badge.badge-daily_rates {
+    background: #d7f4e8;
+    color: #00a32a;
+}
+
+.post-type-badge.badge-comparison {
+    background: #e5f5fa;
+    color: #0073aa;
+}
+
+.post-type-badge.badge-ranking {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.recent-post-item .post-actions {
+    display: flex;
+    gap: 5px;
+}
+
+/* Generated Content Tables */
+.vbdh-rates-table,
+.vbdh-exchange-table,
+.vbdh-comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.vbdh-rates-table th,
+.vbdh-exchange-table th,
+.vbdh-comparison-table th {
+    background: #f0f0f1;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #dcdcde;
+}
+
+.vbdh-rates-table td,
+.vbdh-exchange-table td,
+.vbdh-comparison-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.vbdh-rates-table tr:hover,
+.vbdh-exchange-table tr:hover,
+.vbdh-comparison-table tr:hover {
+    background: #f9f9f9;
+}
+
+.vbdh-rates-table .rate-highlight,
+.vbdh-comparison-table .positive {
+    color: #00a32a;
+    font-weight: 700;
+}
+
+.vbdh-comparison-table .negative {
+    color: #d63638;
+    font-weight: 700;
+}
+
+.vbdh-ranking-list {
+    list-style: none;
+    padding: 0;
+    counter-reset: ranking;
+}
+
+.vbdh-ranking-list li {
+    padding: 20px;
+    margin-bottom: 15px;
+    background: #f9f9f9;
+    border-left: 4px solid #0073aa;
+    counter-increment: ranking;
+}
+
+.vbdh-ranking-list li h3:before {
+    content: "#" counter(ranking) " - ";
+    color: #0073aa;
+}
+
+/* Settings Form */
+.vbdh-settings-form .form-table th {
+    padding-left: 0;
+}

@@ -107,6 +107,11 @@ class VBDH_Admin {
                     <span class="dashicons dashicons-list-view"></span>
                     <?php _e('API Logs', 'vbdh'); ?>
                 </a>
+                <a href="?page=vbdh-banking-data&tab=content"
+                   class="nav-tab <?php echo $current_tab === 'content' ? 'nav-tab-active' : ''; ?>">
+                    <span class="dashicons dashicons-welcome-write-blog"></span>
+                    <?php _e('Tạo Nội dung', 'vbdh'); ?>
+                </a>
             </nav>
 
             <!-- Tab Content -->
@@ -123,6 +128,10 @@ class VBDH_Admin {
 
                     case 'logs':
                         $this->render_logs_tab();
+                        break;
+
+                    case 'content':
+                        $this->render_content_tab();
                         break;
 
                     default:
@@ -153,6 +162,13 @@ class VBDH_Admin {
      */
     private function render_logs_tab() {
         require_once VBDH_PLUGIN_DIR . 'admin/views/tab-logs.php';
+    }
+
+    /**
+     * Render Content Generation Tab
+     */
+    private function render_content_tab() {
+        require_once VBDH_PLUGIN_DIR . 'admin/views/tab-content.php';
     }
 
     /**
@@ -264,6 +280,8 @@ class VBDH_Admin {
 // AJAX handlers
 add_action('wp_ajax_vbdh_sync_bank', 'vbdh_ajax_sync_bank');
 add_action('wp_ajax_vbdh_delete_bank', 'vbdh_ajax_delete_bank');
+add_action('wp_ajax_vbdh_generate_content', 'vbdh_ajax_generate_content');
+add_action('wp_ajax_vbdh_generate_comparison', 'vbdh_ajax_generate_comparison');
 
 function vbdh_ajax_sync_bank() {
     check_ajax_referer('vbdh_admin_nonce', 'nonce');
@@ -295,5 +313,71 @@ function vbdh_ajax_delete_bank() {
         wp_send_json_success(array('message' => 'Bank deleted'));
     } else {
         wp_send_json_error(array('message' => 'Failed to delete'));
+    }
+}
+
+/**
+ * AJAX: Generate content (daily_rates or ranking)
+ */
+function vbdh_ajax_generate_content() {
+    check_ajax_referer('vbdh_admin_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'Unauthorized'));
+    }
+
+    $type = sanitize_text_field($_POST['content_type']);
+    $generator = new VBDH_Content_Generator();
+
+    if ($type === 'daily_rates') {
+        $result = $generator->generate_daily_rates_post();
+    } elseif ($type === 'ranking') {
+        $result = $generator->generate_ranking_post('savings', 12);
+    } else {
+        wp_send_json_error(array('message' => 'Invalid content type'));
+        return;
+    }
+
+    if ($result['success']) {
+        $result['edit_url'] = get_edit_post_link($result['post_id']);
+        $result['view_url'] = get_permalink($result['post_id']);
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
+    }
+}
+
+/**
+ * AJAX: Generate comparison post
+ */
+function vbdh_ajax_generate_comparison() {
+    check_ajax_referer('vbdh_admin_nonce', 'nonce');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'Unauthorized'));
+    }
+
+    $bank_id_1 = intval($_POST['bank_id_1']);
+    $bank_id_2 = intval($_POST['bank_id_2']);
+
+    if (!$bank_id_1 || !$bank_id_2) {
+        wp_send_json_error(array('message' => 'Vui lòng chọn 2 ngân hàng'));
+        return;
+    }
+
+    if ($bank_id_1 === $bank_id_2) {
+        wp_send_json_error(array('message' => 'Vui lòng chọn 2 ngân hàng khác nhau'));
+        return;
+    }
+
+    $generator = new VBDH_Content_Generator();
+    $result = $generator->generate_comparison_post($bank_id_1, $bank_id_2);
+
+    if ($result['success']) {
+        $result['edit_url'] = get_edit_post_link($result['post_id']);
+        $result['view_url'] = get_permalink($result['post_id']);
+        wp_send_json_success($result);
+    } else {
+        wp_send_json_error($result);
     }
 }
